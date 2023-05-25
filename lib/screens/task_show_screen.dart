@@ -44,23 +44,40 @@ class TaskShowScreen extends StatelessWidget {
         builder: (context, tasksProvider, _) {
           return Stack(
             children: [
-              Image.network(
-                "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg",
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 16.0),
                   Padding(
                     padding: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Name:',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
                     child: TextField(
                       controller: nameController,
                       style: TextStyle(
                         fontSize: 20.0,
-                        color: Colors.white,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Effort Hours:',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -69,9 +86,10 @@ class TaskShowScreen extends StatelessWidget {
                     padding: EdgeInsets.only(left: 16.0),
                     child: TextField(
                       controller: effortHoursController,
+                      keyboardType: TextInputType.number,
                       style: TextStyle(
                         fontSize: 20.0,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -93,17 +111,18 @@ class TaskShowScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _save(nameController.text, effortHoursController.text);
+                        },
+                        child: Text('Salvar'),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-              Positioned(
-                bottom: 16.0,
-                right: 16.0,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _save(nameController.text, effortHoursController.text);
-                  },
-                  child: Text('Salvar'),
-                ),
               ),
             ],
           );

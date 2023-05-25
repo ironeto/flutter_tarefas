@@ -46,14 +46,14 @@ class TasksProvider with ChangeNotifier {
   }
 
 
-  void addTask(String name, int effortHours) {
+  void addTask(String name, int effortHours, double latitude, double longitude) {
     int lastId = itens.isNotEmpty ? itens.map((task) => task.id).reduce(max) + 1 : 1;
     final newTask = TaskModel(
       (lastId + 1),
       name,
       effortHours,
-      0,
-      0
+      latitude,
+      longitude
     );
 
     itens.add(newTask);
