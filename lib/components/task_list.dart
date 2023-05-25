@@ -22,6 +22,6 @@ class TaskList extends StatelessWidget {
               children: _generateListTasks(context),
             ),
           )
-        : Text("Não há produtos cadastrados.");
+        : Text("Não há tarefas cadastradas.");
   }
 }
