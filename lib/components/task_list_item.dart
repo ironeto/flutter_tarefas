@@ -37,7 +37,7 @@ class TaskListItem extends StatelessWidget {
       subtitle: Text(_formatSubtitle()),
       trailing: IconButton(
         icon: const Icon(Icons.add),
-        onPressed: () => tasksProvider.addEffort(task),
+        onPressed: () => tasksProvider.addEffort(task, 0),
       ),
       onTap: () {
         Navigator.of(context).pushNamed(RoutePaths.TaskSHOWSCREEN, arguments: task);
