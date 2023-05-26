@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import '../providers/task_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
+
+import '../providers/task_provider.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   @override
@@ -11,11 +13,10 @@ class CreateTaskScreen extends StatefulWidget {
 
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _effortHoursController = TextEditingController();
+  double _effortHours = 0;
   LatLng _position = LatLng(0, 0);
 
   bool _validateName = false;
-  bool _validateEffortHours = false;
 
   @override
   void initState() {
@@ -35,14 +36,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   void _createTask(BuildContext context) {
     final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
     final String name = _nameController.text;
-    int effortHours = 0;
-    try {
-      effortHours = int.parse(_effortHoursController.text);
-    } catch (e) {
-      effortHours = 1;
-    }
 
-    tasksProvider.addTask(name, effortHours, _position.latitude, _position.longitude);
+    tasksProvider.addTask(name, _effortHours.toInt(), _position.latitude, _position.longitude);
 
     Navigator.of(context).pop(); // Navigate back to the task list screen
   }
@@ -58,17 +53,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     } else {
       setState(() {
         _validateName = false;
-      });
-    }
-
-    if (_effortHoursController.text.isEmpty) {
-      setState(() {
-        _validateEffortHours = true;
-      });
-      isValid = false;
-    } else {
-      setState(() {
-        _validateEffortHours = false;
       });
     }
 
@@ -109,13 +93,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 ),
               ),
               SizedBox(height: 16.0),
-              TextField(
-                controller: _effortHoursController,
+              SpinBox(
+                value: _effortHours,
+                min: 0,
+                max: 24,
+                onChanged: (value) {
+                  setState(() {
+                    _effortHours = value;
+                  });
+                },
                 decoration: InputDecoration(
                   labelText: 'Esforço (Hs)',
-                  errorText: _validateEffortHours ? 'O campo Esforço é obrigatório' : null,
                 ),
-                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 16.0),
               Expanded(

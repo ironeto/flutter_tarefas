@@ -13,7 +13,7 @@ class TaskOverviewCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            "Total",
+            "Total horas",
             style: TextStyle(fontSize: 22.0),
           ),
           Column(

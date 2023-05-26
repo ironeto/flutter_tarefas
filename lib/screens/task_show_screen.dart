@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
 
 import '../providers/task_provider.dart';
 import '../models/task_model.dart';
 
 class TaskShowScreen extends StatefulWidget {
-  const TaskShowScreen({Key? key});
+  const TaskShowScreen({Key? key}) : super(key: key);
 
   @override
   _TaskShowScreenState createState() => _TaskShowScreenState();
@@ -33,6 +34,14 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
       effortHoursController.text = task?.effortHours.toString() ?? '';
       _addMarker(LatLng(task!.latitude, task!.longitude));
     });
+
+    // Set initial value for SpinBox
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final double effortHours = double.tryParse(effortHoursController.text) ?? 0;
+      setState(() {
+        effortHoursController.text = effortHours.toString();
+      });
+    });
   }
 
   void _addMarker(LatLng position) {
@@ -49,7 +58,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
   void _save() {
     final String name = nameController.text;
     final String effort = effortHoursController.text;
-    final int effortHours = int.tryParse(effort) ?? 0;
+    final int effortHours = double.tryParse(effort)?.toInt() ?? 0;
 
     setState(() {
       _validateName = name.isEmpty;
@@ -72,7 +81,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(task?.name ?? ''),
+        title: Text('Editar Tarefa'),
       ),
       body: Consumer<TasksProvider>(
         builder: (context, tasksProvider, _) {
@@ -85,7 +94,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Name:',
+                      'Nome:',
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -111,7 +120,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'Effort Hours:',
+                      'Esforço (Hs):',
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -121,16 +130,24 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: effortHoursController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(
+                    child: SpinBox(
+                      value: double.tryParse(effortHoursController.text) ?? 0,
+                      min: 0,
+                      max: 100,
+                      incrementIcon: Icon(Icons.add),
+                      decrementIcon: Icon(Icons.remove),
+                      textStyle: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        errorText: _validateEffortHours ? 'Effort is required' : null,
+                        errorText: _validateEffortHours ? 'Esforço (Hs) is required' : null,
                       ),
+                      onChanged: (value) {
+                        setState(() {
+                          effortHoursController.text = value.toString();
+                        });
+                      },
                     ),
                   ),
                   Expanded(
