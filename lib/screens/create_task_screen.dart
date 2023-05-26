@@ -14,6 +14,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final TextEditingController _effortHoursController = TextEditingController();
   LatLng _position = LatLng(0, 0);
 
+  bool _validateName = false;
+  bool _validateEffortHours = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,13 +38,41 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     int effortHours = 0;
     try {
       effortHours = int.parse(_effortHoursController.text);
-    } catch(e) {
+    } catch (e) {
       effortHours = 1;
     }
 
-    tasksProvider.addTask(name, effortHours,_position.latitude, _position.longitude);
+    tasksProvider.addTask(name, effortHours, _position.latitude, _position.longitude);
 
     Navigator.of(context).pop(); // Navigate back to the task list screen
+  }
+
+  bool _validateFields() {
+    bool isValid = true;
+
+    if (_nameController.text.isEmpty) {
+      setState(() {
+        _validateName = true;
+      });
+      isValid = false;
+    } else {
+      setState(() {
+        _validateName = false;
+      });
+    }
+
+    if (_effortHoursController.text.isEmpty) {
+      setState(() {
+        _validateEffortHours = true;
+      });
+      isValid = false;
+    } else {
+      setState(() {
+        _validateEffortHours = false;
+      });
+    }
+
+    return isValid;
   }
 
   @override
@@ -72,12 +103,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             children: [
               TextField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nome'),
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  errorText: _validateName ? 'O campo Nome é obrigatório' : null,
+                ),
               ),
               SizedBox(height: 16.0),
               TextField(
                 controller: _effortHoursController,
-                decoration: InputDecoration(labelText: 'Esforço (Hs)'),
+                decoration: InputDecoration(
+                  labelText: 'Esforço (Hs)',
+                  errorText: _validateEffortHours ? 'O campo Esforço é obrigatório' : null,
+                ),
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 16.0),
@@ -103,7 +140,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: () => _createTask(context),
+                    onPressed: () {
+                      if (_validateFields()) {
+                        _createTask(context);
+                      }
+                    },
                     child: Text('Salvar'),
                   ),
                 ),

@@ -5,40 +5,74 @@ import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 import '../models/task_model.dart';
 
-class TaskShowScreen extends StatelessWidget {
+class TaskShowScreen extends StatefulWidget {
   const TaskShowScreen({Key? key});
 
   @override
-  Widget build(BuildContext context) {
-    final TaskModel task = ModalRoute.of(context)?.settings.arguments as TaskModel;
+  _TaskShowScreenState createState() => _TaskShowScreenState();
+}
 
-    final TextEditingController nameController = TextEditingController(text: task.name);
-    final TextEditingController effortHoursController = TextEditingController(text: task.effortHours.toString());
-    LatLng _position = LatLng(0, 0);
+class _TaskShowScreenState extends State<TaskShowScreen> {
+  TaskModel? task;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController effortHoursController = TextEditingController();
+  LatLng _position = LatLng(0, 0);
 
-    GoogleMapController? _mapController;
-    Set<Marker> _markers = {};
+  GoogleMapController? _mapController;
+  Set<Marker> _markers = {};
 
-    void _addMarker(LatLng position) {
-      _markers.clear(); // Clear previous markers
-      _markers.add(
-        Marker(
-          markerId: MarkerId(position.toString()),
-          position: position,
-        ),
+  bool _validateName = false;
+  bool _validateEffortHours = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      task = ModalRoute.of(context)?.settings.arguments as TaskModel;
+      nameController.text = task?.name ?? '';
+      effortHoursController.text = task?.effortHours.toString() ?? '';
+      _addMarker(LatLng(task!.latitude, task!.longitude));
+    });
+  }
+
+  void _addMarker(LatLng position) {
+    _markers.clear(); // Clear previous markers
+    _markers.add(
+      Marker(
+        markerId: MarkerId(position.toString()),
+        position: position,
+      ),
+    );
+    _position = position;
+  }
+
+  void _save() {
+    final String name = nameController.text;
+    final String effort = effortHoursController.text;
+    final int effortHours = int.tryParse(effort) ?? 0;
+
+    setState(() {
+      _validateName = name.isEmpty;
+      _validateEffortHours = effort.isEmpty;
+    });
+
+    if (!_validateName && !_validateEffortHours) {
+      Provider.of<TasksProvider>(context, listen: false).save(
+        task!,
+        name,
+        effortHours,
+        _position.latitude,
+        _position.longitude,
       );
-      _position = position;
-    }
-    _addMarker(LatLng(task.latitude, task.longitude));
-
-    void _save(String name, String effort) {
-      Provider.of<TasksProvider>(context, listen: false).save(task, nameController.text, int.parse(effortHoursController.text), _position.latitude, _position.longitude);
       Navigator.of(context).pop();
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(task.name),
+        title: Text(task?.name ?? ''),
       ),
       body: Consumer<TasksProvider>(
         builder: (context, tasksProvider, _) {
@@ -68,6 +102,9 @@ class TaskShowScreen extends StatelessWidget {
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
+                      decoration: InputDecoration(
+                        errorText: _validateName ? 'Name is required' : null,
+                      ),
                     ),
                   ),
                   SizedBox(height: 16.0),
@@ -91,6 +128,9 @@ class TaskShowScreen extends StatelessWidget {
                         fontSize: 20.0,
                         color: Colors.black,
                       ),
+                      decoration: InputDecoration(
+                        errorText: _validateEffortHours ? 'Effort is required' : null,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -102,7 +142,7 @@ class TaskShowScreen extends StatelessWidget {
                         },
                         markers: _markers,
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(task.latitude, task.longitude),
+                          target: LatLng(task?.latitude ?? 0, task?.longitude ?? 0),
                           zoom: 15.0,
                         ),
                         onTap: (position) {
@@ -115,9 +155,7 @@ class TaskShowScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: ElevatedButton(
-                        onPressed: () {
-                          _save(nameController.text, effortHoursController.text);
-                        },
+                        onPressed: _save,
                         child: Text('Salvar'),
                       ),
                     ),
