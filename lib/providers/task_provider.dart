@@ -6,8 +6,8 @@ import '../models/task_model.dart';
 
 class TasksProvider with ChangeNotifier {
   final List<TaskModel> itens = [
-    TaskModel(1,"Fazer Café", 1,0,0),
-    TaskModel(2,"Desenvolver projeto", 2,0,0)
+    TaskModel(1,"Fazer Café", 1,0,0, DateTime(2023,5,28)),
+    TaskModel(2,"Desenvolver projeto", 2,0,0, DateTime(2023,5,28))
   ];
 
   void addEffort(TaskModel Task, int effort) {
@@ -24,6 +24,7 @@ class TasksProvider with ChangeNotifier {
     Task.latitude = latitude;
     Task.longitude = longitude;
     Task.effortHours = effortHours;
+    Task.date = DateTime.now();
     notifyListeners();
   }
 
@@ -53,7 +54,8 @@ class TasksProvider with ChangeNotifier {
       name,
       effortHours,
       latitude,
-      longitude
+      longitude,
+      DateTime.now()
     );
 
     itens.add(newTask);

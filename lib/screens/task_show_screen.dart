@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:intl/intl.dart'; // Added import for date formatting
 
 import '../providers/task_provider.dart';
 import '../models/task_model.dart';
@@ -148,6 +149,29 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                           effortHoursController.text = value.toString();
                         });
                       },
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'Data:',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      DateFormat('dd/MM/yyyy').format(task?.date ?? DateTime.now()),
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Expanded(
