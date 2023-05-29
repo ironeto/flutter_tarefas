@@ -46,15 +46,18 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
   }
 
   void _addMarker(LatLng position) {
-    _markers.clear(); // Clear previous markers
-    _markers.add(
-      Marker(
-        markerId: MarkerId(position.toString()),
-        position: position,
-      ),
-    );
-    _position = position;
+    setState(() {
+      _markers.clear(); // Clear previous markers
+      _markers.add(
+        Marker(
+          markerId: MarkerId(position.toString()),
+          position: position,
+        ),
+      );
+      _position = position;
+    });
   }
+
 
   void _save() {
     final String name = nameController.text;
@@ -184,7 +187,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                         markers: _markers,
                         initialCameraPosition: CameraPosition(
                           target: LatLng(task?.latitude ?? 0, task?.longitude ?? 0),
-                          zoom: 15.0,
+                          zoom: 3.0,
                         ),
                         onTap: (position) {
                           _addMarker(position);

@@ -18,6 +18,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   bool _validateName = false;
 
+  GoogleMapController? _mapController;
+  Set<Marker> _markers = {};
+
   @override
   void initState() {
     super.initState();
@@ -59,12 +62,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     return isValid;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    GoogleMapController? _mapController;
-    Set<Marker> _markers = {};
-
-    void _addMarker(LatLng position) {
+  void _addMarker(LatLng position) {
+    setState(() {
       _markers.clear(); // Clear previous markers
       _markers.add(
         Marker(
@@ -73,8 +72,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
       );
       _position = position;
-    }
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => TasksProvider(),
       child: Scaffold(
@@ -117,7 +119,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     markers: _markers,
                     initialCameraPosition: CameraPosition(
                       target: _position,
-                      zoom: 15.0,
+                      zoom: 3.0,
                     ),
                     onTap: (position) {
                       _addMarker(position);
