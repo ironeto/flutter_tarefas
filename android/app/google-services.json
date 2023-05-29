@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "794853147970",
+    "project_id": "gerenciador_de_tarefas-388217",
+    "storage_bucket": "gerenciador_de_tarefas-388217.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794853147970:android:efa05d631d9d9b5a2774db",
+        "android_client_info": {
+          "package_name": "br.alvaro.neto.gerenciadorDeTarefas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794853147970-1dsjag3plc1t7op3c6nb4fapi46aiudq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgI_qTvvcGe_mG_X_Xcr5JCI6SaSKq9-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794853147970-1dsjag3plc1t7op3c6nb4fapi46aiudq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "794853147970-d2g74fk038gmt7tnl0mjogclkjji77m2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "br.alvaro.neto.gerenciadorDeTarefas"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794853147970:android:309231342c136cc42774db",
+        "android_client_info": {
+          "package_name": "br.alvaro.neto.gerenciador_de_tarefas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "794853147970-1dsjag3plc1t7op3c6nb4fapi46aiudq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgI_qTvvcGe_mG_X_Xcr5JCI6SaSKq9-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "794853147970-1dsjag3plc1t7op3c6nb4fapi46aiudq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "794853147970-d2g74fk038gmt7tnl0mjogclkjji77m2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "br.alvaro.neto.gerenciadorDeTarefas"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

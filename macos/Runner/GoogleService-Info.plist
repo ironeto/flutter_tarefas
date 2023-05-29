@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>794853147970-41cb685jurrbl36d8s7gcfuu4n1neh5b.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.794853147970-41cb685jurrbl36d8s7gcfuu4n1neh5b</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA_RwXw_EuV8sKfdu8eo1J-boyDazVwiEM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>794853147970</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>br.alvaro.neto.gerenciador_de_tarefas</string>
+	<key>PROJECT_ID</key>
+	<string>gerenciador_de_tarefas-388217</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gerenciador_de_tarefas-388217.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:794853147970:ios:9d030137de1c80d62774db</string>
+</dict>
+</plist>

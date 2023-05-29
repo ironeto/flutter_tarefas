@@ -28,12 +28,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   void _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    setState(() {
-      _position = LatLng(position.latitude, position.longitude);
-    });
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        _position = LatLng(position.latitude, position.longitude);
+        _addMarker(_position);
+      });
+    } catch (e) {
+      print('Error retrieving current location: $e');
+      // Default position (e.g., a specific location or your desired fallback)
+      LatLng defaultPosition = LatLng(37.7749, -122.4194);
+      setState(() {
+        _position = defaultPosition;
+        _addMarker(_position);
+      });
+    }
   }
 
   void _createTask(BuildContext context) {
@@ -119,7 +130,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     markers: _markers,
                     initialCameraPosition: CameraPosition(
                       target: _position,
-                      zoom: 3.0,
+                      zoom: 2.0,
                     ),
                     onTap: (position) {
                       _addMarker(position);
