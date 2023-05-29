@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:intl/intl.dart'; // Added import for date formatting
+import 'package:geolocator/geolocator.dart';
 
 import '../providers/task_provider.dart';
 import '../models/task_model.dart';
@@ -33,7 +34,11 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
       task = ModalRoute.of(context)?.settings.arguments as TaskModel;
       nameController.text = task?.name ?? '';
       effortHoursController.text = task?.effortHours.toString() ?? '';
-      _addMarker(LatLng(task!.latitude, task!.longitude));
+      if (task!.latitude == 0 && task!.longitude == 0) {
+        _getCurrentLocation();
+      } else {
+        _addMarker(LatLng(task!.latitude, task!.longitude));
+      }
     });
 
     // Set initial value for SpinBox
@@ -43,6 +48,16 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
         effortHoursController.text = effortHours.toString();
       });
     });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _addMarker(LatLng(position.latitude, position.longitude));
+    } catch (error) {
+      print(error);
+    }
   }
 
   void _addMarker(LatLng position) {
@@ -57,7 +72,6 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
       _position = position;
     });
   }
-
 
   void _save() {
     final String name = nameController.text;
@@ -145,7 +159,8 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        errorText: _validateEffortHours ? 'Esforço (Hs) is required' : null,
+                        errorText:
+                        _validateEffortHours ? 'Esforço (Hs) is required' : null,
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -169,7 +184,8 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 16.0),
                     child: Text(
-                      DateFormat('dd/MM/yyyy').format(task?.date ?? DateTime.now()),
+                      DateFormat('dd/MM/yyyy')
+                          .format(task?.date ?? DateTime.now()),
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -186,8 +202,10 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                         },
                         markers: _markers,
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(task?.latitude ?? 0, task?.longitude ?? 0),
-                          zoom: 3.0,
+                          target: LatLng(
+                              task?.latitude ?? _position.latitude,
+                              task?.longitude ?? _position.longitude),
+                          zoom: 2.0,
                         ),
                         onTap: (position) {
                           _addMarker(position);
