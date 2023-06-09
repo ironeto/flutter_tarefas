@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:gerenciador_de_tarefas/firebase_options.dart';
 import 'package:gerenciador_de_tarefas/providers/task_provider.dart';
 import 'package:gerenciador_de_tarefas/routes/route_paths.dart';
 import 'package:gerenciador_de_tarefas/screens/create_task_screen.dart';
@@ -6,7 +8,9 @@ import 'package:gerenciador_de_tarefas/screens/task_show_screen.dart';
 import 'package:gerenciador_de_tarefas/screens/task_list_screen.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(App());
 }
 
