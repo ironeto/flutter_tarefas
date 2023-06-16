@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:http/http.dart' as http;
 
-abstract class Repository {
+abstract class BaseFirebaseFireStoreRepository {
   final db = FirebaseFirestore.instance;
   // final _baseUrl = "https://dmcflutter23t2-default-rtdb.firebaseio.com/";
   final String _collection; // collection

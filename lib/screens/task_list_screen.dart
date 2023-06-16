@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_pk/GenericOverviewCard.dart';
+import 'package:shared_pk/IGenericOverviewCard.dart';
 
 import '../components/task_list.dart';
-import '../components/task_overview_card.dart';
 import '../providers/task_provider.dart';
 import '../routes/route_paths.dart';
 
@@ -24,7 +25,7 @@ class TaskListScreen extends StatelessWidget {
           return Column(
             children: [
               TaskList(),
-              TaskOverviewCard(),
+              GenericOverviewCard<IGenericOverviewCard>(),
             ],
           );
         },

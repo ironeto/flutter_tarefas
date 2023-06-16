@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shared_pk/IGenericOverviewCard.dart';
 
 import '../models/task_model.dart';
 
-class TasksProvider with ChangeNotifier {
+class TasksProvider with ChangeNotifier implements IGenericOverviewCard {
   final List<TaskModel> itens = [
     TaskModel(1,"Fazer Café", 1,0,0, DateTime(2023,5,28)),
     TaskModel(2,"Desenvolver projeto", 2,0,0, DateTime(2023,5,28))
