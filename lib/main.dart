@@ -4,6 +4,7 @@ import 'package:gerenciador_de_tarefas/firebase_options.dart';
 import 'package:gerenciador_de_tarefas/providers/task_provider.dart';
 import 'package:gerenciador_de_tarefas/routes/route_paths.dart';
 import 'package:gerenciador_de_tarefas/screens/create_task_screen.dart';
+import 'package:gerenciador_de_tarefas/screens/sign_in_screen.dart';
 import 'package:gerenciador_de_tarefas/screens/task_show_screen.dart';
 import 'package:gerenciador_de_tarefas/screens/task_list_screen.dart';
 import 'package:provider/provider.dart';
@@ -25,9 +26,10 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Your App',
-        initialRoute: RoutePaths.HOME,
+        initialRoute: RoutePaths.SIGN_IN_SCREEN,
         routes: {
-          RoutePaths.HOME: (context) => TaskListScreen(),
+          RoutePaths.SIGN_IN_SCREEN: (context) => SignInScreen(),
+          RoutePaths.TASKS_LIST_SCREEN: (context) => TaskListScreen(),
           RoutePaths.TaskSHOWSCREEN: (context) => TaskShowScreen(),
           RoutePaths.CREATE_TASK: (context) => CreateTaskScreen(),
         },
