@@ -5,7 +5,7 @@ import 'package:shared_pk/IGenericOverviewCard.dart';
 
 import '../models/task_model.dart';
 
-class TasksProvider with ChangeNotifier implements IGenericOverviewCard {
+class TasksProvider extends ChangeNotifier implements IGenericOverviewCard {
   final List<TaskModel> itens = [
     TaskModel(1,"Fazer Café", 1,0,0, DateTime(2023,5,28)),
     TaskModel(2,"Desenvolver projeto", 2,0,0, DateTime(2023,5,28))
@@ -63,6 +63,8 @@ class TasksProvider with ChangeNotifier implements IGenericOverviewCard {
     notifyListeners();
   }
 
-
-  int countItens() => itens.fold(0, (acc, p) => acc + p.effortHours);
+  @override
+  int countItems() {
+    return itens.fold(0, (acc, p) => acc + p.effortHours);
+  }
 }

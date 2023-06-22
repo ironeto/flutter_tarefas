@@ -25,7 +25,7 @@ class TaskListScreen extends StatelessWidget {
           return Column(
             children: [
               TaskList(),
-              GenericOverviewCard<IGenericOverviewCard>(),
+              GenericOverviewCard<IGenericOverviewCard>(labelForCounter:'Total de Horas'),
             ],
           );
         },

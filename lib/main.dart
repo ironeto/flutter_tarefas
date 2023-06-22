@@ -8,6 +8,7 @@ import 'package:gerenciador_de_tarefas/screens/sign_in_screen.dart';
 import 'package:gerenciador_de_tarefas/screens/task_show_screen.dart';
 import 'package:gerenciador_de_tarefas/screens/task_list_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_pk/IGenericOverviewCard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,9 @@ class App extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<TasksProvider>(
           create: (context) => TasksProvider(),
+        ),
+        ChangeNotifierProvider<IGenericOverviewCard>(
+          create: (context) => Provider.of<TasksProvider>(context, listen: false),
         ),
       ],
       child: MaterialApp(
