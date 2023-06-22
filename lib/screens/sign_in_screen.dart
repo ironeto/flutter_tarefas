@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import '../routes/route_paths.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({Key? key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: 'ironeto@hotmail.com');
+  final TextEditingController passwordController = TextEditingController(text: 'deskjet');
   final FirebaseAuth auth = FirebaseAuth.instance;
   bool isLoading = false;
 
@@ -64,11 +64,11 @@ class _SignInScreenState extends State<SignInScreen> {
             isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => {
-                      login()
-                    },
-                    child: const Text("Login"),
-                  ),
+              onPressed: () => {
+                login()
+              },
+              child: const Text("Login"),
+            ),
           ],
         ),
       ),

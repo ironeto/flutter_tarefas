@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
-import 'package:intl/intl.dart'; // Added import for date formatting
+import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../providers/task_provider.dart';
@@ -27,6 +29,9 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
   bool _validateName = false;
   bool _validateEffortHours = false;
 
+  bool _isAccordionExpanded = false;
+  File? image;
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +48,8 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
 
     // Set initial value for SpinBox
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      final double effortHours = double.tryParse(effortHoursController.text) ?? 0;
+      final double effortHours =
+          double.tryParse(effortHoursController.text) ?? 0;
       setState(() {
         effortHoursController.text = effortHours.toString();
       });
@@ -62,7 +68,7 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
 
   void _addMarker(LatLng position) {
     setState(() {
-      _markers.clear(); // Clear previous markers
+      _markers.clear();
       _markers.add(
         Marker(
           markerId: MarkerId(position.toString()),
@@ -95,124 +101,140 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
     }
   }
 
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+      maxWidth: 200,
+    );
+    if (pickImage != null) {
+      setState(() {
+        image = File(pickImage.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Editar Tarefa'),
       ),
-      body: Consumer<TasksProvider>(
-        builder: (context, tasksProvider, _) {
-          return Stack(
-            children: [
-              Column(
+      body: SingleChildScrollView(
+        child: Consumer<TasksProvider>(
+          builder: (context, tasksProvider, _) {
+            return Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16.0),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Nome:',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Text(
+                    'Nome:',
+                    style: TextStyle(
+                      color: Colors.black,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      controller: nameController,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      decoration: InputDecoration(
-                        errorText: _validateName ? 'Name is required' : null,
-                      ),
+                  TextField(
+                    controller: nameController,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      errorText: _validateName ? 'Name is required' : null,
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Esforço (Hs):',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Text(
+                    'Esforço (Hs):',
+                    style: TextStyle(
+                      color: Colors.black,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: SpinBox(
-                      value: double.tryParse(effortHoursController.text) ?? 0,
-                      min: 0,
-                      max: 100,
-                      incrementIcon: Icon(Icons.add),
-                      decrementIcon: Icon(Icons.remove),
-                      textStyle: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
+                  SpinBox(
+                    value: double.tryParse(effortHoursController.text) ?? 0,
+                    min: 0,
+                    max: 100,
+                    incrementIcon: Icon(Icons.add),
+                    decrementIcon: Icon(Icons.remove),
+                    textStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      errorText: _validateEffortHours
+                          ? 'Esforço (Hs) is required'
+                          : null,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        effortHoursController.text = value.toString();
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Data:',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('dd/MM/yyyy')
+                        .format(task?.date ?? DateTime.now()),
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200.0, // Adjust the height as needed
+                    child: GoogleMap(
+                      onMapCreated: (controller) {
+                        _mapController = controller;
+                      },
+                      markers: _markers,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(task?.latitude ?? _position.latitude,
+                            task?.longitude ?? _position.longitude),
+                        zoom: 2.0,
                       ),
-                      decoration: InputDecoration(
-                        errorText:
-                        _validateEffortHours ? 'Esforço (Hs) is required' : null,
-                      ),
-                      onChanged: (value) {
+                      onTap: (position) {
+                        _addMarker(position);
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: Text('Imagem da tarefa'),
+                    trailing: IconButton(
+                      icon: Icon(_isAccordionExpanded
+                          ? Icons.expand_less
+                          : Icons.expand_more),
+                      onPressed: () {
                         setState(() {
-                          effortHoursController.text = value.toString();
+                          _isAccordionExpanded = !_isAccordionExpanded;
                         });
                       },
                     ),
                   ),
-                  SizedBox(height: 16.0),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Data:',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      DateFormat('dd/MM/yyyy')
-                          .format(task?.date ?? DateTime.now()),
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: GoogleMap(
-                        onMapCreated: (controller) {
-                          _mapController = controller;
-                        },
-                        markers: _markers,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                              task?.latitude ?? _position.latitude,
-                              task?.longitude ?? _position.longitude),
-                          zoom: 2.0,
+                  AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      height: _isAccordionExpanded ? 400.0 : 0.0,
+                      child: Center(
+                        child: Column(
+                          children: [
+                            IconButton(
+                              onPressed: pickImage,
+                              icon: const Icon(Icons.camera),
+                            ),
+                            if (image != null)
+                              Image.file(
+                                image!,
+                                height: 300,
+                              )
+                            else
+                              const Text("Capture a imagem!"),
+                          ],
                         ),
-                        onTap: (position) {
-                          _addMarker(position);
-                        },
-                      ),
-                    ),
-                  ),
+                      )),
                   Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
@@ -224,9 +246,9 @@ class _TaskShowScreenState extends State<TaskShowScreen> {
                   ),
                 ],
               ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

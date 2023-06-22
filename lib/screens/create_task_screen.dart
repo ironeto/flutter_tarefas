@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,10 +17,12 @@ class CreateTaskScreen extends StatefulWidget {
 
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final TextEditingController _nameController = TextEditingController();
+  File? image;
   double _effortHours = 0;
   LatLng _position = LatLng(0, 0);
 
   bool _validateName = false;
+  bool _isAccordionExpanded = false;
 
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
@@ -86,6 +92,24 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     });
   }
 
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+      maxWidth: 200,
+    );
+    if (pickImage != null) {
+      setState(() {
+        image = File(pickImage.path);
+      });
+      final firebaseStorage = FirebaseStorage.instance;
+      final reference = firebaseStorage.ref("tasks/dascfesddasddasd.jpg");
+      final upload = reference.putFile(image!);
+      upload.whenComplete(() => print("Upload realizado com sucesso."));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -94,35 +118,35 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         appBar: AppBar(
           title: Text('Criar Tarefa'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Nome',
-                  errorText: _validateName ? 'O campo Nome é obrigatório' : null,
+        body: SingleChildScrollView( // Wrap the column in SingleChildScrollView
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Nome',
+                    errorText: _validateName ? 'O campo Nome é obrigatório' : null,
+                  ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              SpinBox(
-                value: _effortHours,
-                min: 0,
-                max: 24,
-                onChanged: (value) {
-                  setState(() {
-                    _effortHours = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  labelText: 'Esforço (Hs)',
+                SizedBox(height: 16.0),
+                SpinBox(
+                  value: _effortHours,
+                  min: 0,
+                  max: 24,
+                  onChanged: (value) {
+                    setState(() {
+                      _effortHours = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Esforço (Hs)',
+                  ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
+                SizedBox(height: 16.0),
+                Container( // Wrap the GoogleMap in a container to limit its height
+                  height: 200,
                   child: GoogleMap(
                     onMapCreated: (controller) {
                       _mapController = controller;
@@ -137,21 +161,45 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     },
                   ),
                 ),
-              ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: ElevatedButton(
+                ListTile(
+                  title: Text('Imagem da tarefa'),
+                  trailing: IconButton(
+                    icon: Icon(_isAccordionExpanded ? Icons.expand_less : Icons.expand_more),
                     onPressed: () {
-                      if (_validateFields()) {
-                        _createTask(context);
-                      }
+                      setState(() {
+                        _isAccordionExpanded = !_isAccordionExpanded;
+                      });
                     },
-                    child: Text('Salvar'),
                   ),
                 ),
-              ),
-            ],
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: _isAccordionExpanded ? 400.0 : 0.0,
+                  child: Column(
+                    children: [
+                      IconButton(
+                        onPressed: pickImage,
+                        icon: const Icon(Icons.camera),
+                      ),
+                      image != null ? Image.file(image!,height: 300,) : const Text("Capture a imagem!"),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_validateFields()) {
+                          _createTask(context);
+                        }
+                      },
+                      child: Text('Salvar'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
